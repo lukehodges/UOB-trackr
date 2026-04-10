@@ -13,6 +13,9 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     "entry": null,
-    entry: {}
+    entry: {
+      "goalDesc": "Goal description!!!!",
+      "points": 50
+    }
   },
 };
