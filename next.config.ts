@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
   turbopack: {
-    root: "C:\\Users\\tobyd\\PC\\Desktop\\UOB-trackr"
+    root: ""
   }
 };
 
