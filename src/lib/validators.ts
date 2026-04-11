@@ -1,4 +1,4 @@
-
+import { register } from "module";
 import { z } from "zod";
 
 export const registerSchema = z.object({
@@ -29,6 +29,17 @@ export const sleepEntrySchema = z.object({
 export const sleepEntryUpdateSchema = sleepEntrySchema.partial().extend({
   id: z.string().uuid(),
 });
+
+export const goalCardSchema = z.object({
+  goalDesc: z.string(),
+  points: z.number().int().min(0),
+  startDate: z.string().date().optional(),
+  endDate: z.string().date().optional(),
+})
+
+export const goalCardUpdateSchema = goalCardSchema.partial().extend({
+  id: z.string().uuid(),
+})
 
 export const stressEntrySchema = z.object({
   date: z.string().date(),
@@ -81,5 +92,7 @@ export type LoginInput = z.infer<typeof loginSchema>
 export type SleepCycle = z.infer<typeof sleepCycleSchema>
 export type SleepEntry = z.infer<typeof sleepEntrySchema>
 export type SleepEntryUpdate = z.infer<typeof sleepEntryUpdateSchema>
+export type GoalCard = z.infer<typeof goalCardSchema>
+export type GoalCardUpdate = z.infer<typeof goalCardUpdateSchema>
 export type StressEntryUpdate = z.infer<typeof stressEntryUpdateSchema>
 export type ScreentimeEntryUpdate = z.infer<typeof screentimeEntryUpdateSchema>
