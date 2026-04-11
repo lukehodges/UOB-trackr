@@ -1,3 +1,5 @@
+'use client' // using useState
+
 import React, { useState, useMemo } from "react";
 
 export type ScreenTimeCategory = "social" | "entertainment" | "productivity" | "education" | "other";
@@ -40,12 +42,12 @@ export default function ScreenTimeEntryForm({ initialData, onSubmit }: ScreenTim
     });
   };
 
-  const categories: { value: ScreenTimeCategory; label: string; icon: string }[] = [
-    { value: "social", label: "Social", icon: "📱" },
-    { value: "entertainment", label: "Fun", icon: "🎮" },
-    { value: "productivity", label: "Work", icon: "💼" },
-    { value: "education", label: "Study", icon: "📚" },
-    { value: "other", label: "Other", icon: "✨" },
+  const categories: { value: ScreenTimeCategory; label: string }[] = [
+    { value: "social", label: "Social" },
+    { value: "entertainment", label: "Fun" },
+    { value: "productivity", label: "Work" },
+    { value: "education", label: "Study" },
+    { value: "other", label: "Other" },
   ];
 
   return (
@@ -118,11 +120,10 @@ export default function ScreenTimeEntryForm({ initialData, onSubmit }: ScreenTim
                 key={cat.value}
                 type="button"
                 onClick={() => setFormData({ ...formData, category: cat.value })}
-                className={`flex flex-col items-center justify-center py-3 rounded-xl border transition-all duration-200 ${
-                  formData.category === cat.value
-                    ? "bg-indigo-500 border-indigo-500 text-white shadow-lg shadow-indigo-500/30"
-                    : "bg-white dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-400 hover:border-indigo-300"
-                }`}
+                className={`flex flex-col items-center justify-center py-3 rounded-xl border transition-all duration-200 ${formData.category === cat.value
+                  ? "bg-indigo-500 border-indigo-500 text-white shadow-lg shadow-indigo-500/30"
+                  : "bg-white dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-400 hover:border-indigo-300"
+                  }`}
               >
                 <span className="text-xl mb-1">{cat.icon}</span>
                 <span className="text-[10px] font-bold uppercase">{cat.label}</span>

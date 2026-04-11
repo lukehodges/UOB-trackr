@@ -13,11 +13,11 @@ export default meta;
 
 type Story = StoryObj<typeof StressEntryForm>;
 
-export const Default: Story = {
+export const Empty: Story = {
   args: {},
 };
 
-export const WithInitialData: Story = {
+export const HighStress: Story = {
   args: {
     initialData: {
       date: new Date().toISOString().split("T")[0],

@@ -65,6 +65,7 @@ export default function SettingsPage({ initialSettings, onSave }: SettingsPagePr
                 <input
                   type="text"
                   value={settings.name}
+                  placeholder="John Doe"
                   onChange={(e) => setSettings({ ...settings, name: e.target.value })}
                   className="w-full px-4 py-2.5 bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                 />
@@ -76,6 +77,7 @@ export default function SettingsPage({ initialSettings, onSave }: SettingsPagePr
                 <input
                   type="email"
                   value={settings.email}
+                  placeholder="johndoe67@gmail.com"
                   onChange={(e) => setSettings({ ...settings, email: e.target.value })}
                   className="w-full px-4 py-2.5 bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                 />

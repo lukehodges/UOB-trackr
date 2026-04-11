@@ -13,18 +13,18 @@ export default meta;
 
 type Story = StoryObj<typeof ScreenTimeEntryForm>;
 
-export const Default: Story = {
+export const Empty: Story = {
   args: {},
 };
 
 export const ProductiveWork: Story = {
   args: {
     initialData: {
-      date: new Date().toISOString().split("T")[0],
-      totalMins: 240, // 4 hours
-      category: "productivity",
-      appName: "VS Code",
-      notes: "Feature implementation for the UOB Trackr.",
+      "date": "2026-04-07",
+      "totalMins": 240,
+      "category": "productivity",
+      "appName": "VS Code",
+      "notes": "Feature implementation for University coursework."
     },
   },
 };

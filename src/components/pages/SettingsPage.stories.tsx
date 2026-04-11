@@ -16,7 +16,22 @@ export default meta;
 
 type Story = StoryObj<typeof SettingsPage>;
 
-export const Default: Story = {
+export const Empty: Story = {
+  args: {
+    initialSettings: {
+      name: "",
+      email: "",
+      theme: "system",
+      units: "metric",
+      notifications: {
+        general: true,
+        reminders: false,
+      },
+    },
+  },
+};
+
+export const PreFilled: Story = {
   args: {
     initialSettings: {
       name: "Alex Thompson",
@@ -28,23 +43,5 @@ export const Default: Story = {
         reminders: false,
       },
     },
-  },
-};
-
-export const DarkMode: Story = {
-  args: {
-    initialSettings: {
-      name: "Sarah Chen",
-      email: "sarahc@example.com",
-      theme: "dark",
-      units: "imperial",
-      notifications: {
-        general: true,
-        reminders: true,
-      },
-    },
-  },
-  parameters: {
-    backgrounds: { default: 'dark' },
   },
 };

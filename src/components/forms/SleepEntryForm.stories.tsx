@@ -16,13 +16,11 @@ export default meta;
 
 type Story = StoryObj<typeof SleepEntryForm>;
 
-export const Default: Story = {
-  args: {
-    onSubmit: (data) => console.log("Form Submitted:", data),
-  },
+export const Empty: Story = {
+  args: {},
 };
 
-export const PreFilled: Story = {
+export const GoodSleep: Story = {
   args: {
     initialData: {
       date: "2024-03-20",
@@ -35,11 +33,15 @@ export const PreFilled: Story = {
   },
 };
 
-export const DarkMode: Story = {
-  parameters: {
-    backgrounds: { default: "dark" },
-  },
+export const BadSleep: Story = {
   args: {
-    onSubmit: (data) => console.log("Form Submitted (Dark Mode):", data),
+    initialData: {
+      date: "2024-03-20",
+      bedtime: "02:00",
+      wakeTime: "10:00",
+      quality: 1,
+      notes: "Woke up late, feeling groggy.",
+    },
   },
 };
+

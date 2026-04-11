@@ -27,7 +27,7 @@ export default function StatCard({ title, value, trend }: StatCardProps) {
   return (
     <div className="rounded-xl border bg-white p-6 shadow-sm">
       <p className="text-sm text-gray-500">{title}</p>
-      <p className="mt-1 text-3xl font-bold">{value}</p>
+      <p className="mt-1 text-3xl font-bold text-black">{value}</p>
       {trend && (
         <span
           className={`mt-2 inline-block text-sm ${trendStyles[trend.direction]}`}
