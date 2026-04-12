@@ -23,14 +23,14 @@ export default function EntryCard({ entry, onEdit, onDelete }: EntryCardProps) {
   };
 
   return (
-    <div className="rounded-xl border bg-white p-5 shadow-sm">
+    <div className="p-5 bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-2xl transition-all duration-300 hover:shadow-primary/5">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-500">{formatDate(entry.date)}</p>
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">{formatDate(entry.date)}</p>
         <div className="flex gap-2">
           {onEdit && (
             <button
               onClick={onEdit}
-              className="text-sm text-blue-600 hover:underline"
+              className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
             >
               Edit
             </button>
@@ -38,17 +38,17 @@ export default function EntryCard({ entry, onEdit, onDelete }: EntryCardProps) {
           {onDelete && (
             <button
               onClick={onDelete}
-              className="text-sm text-red-600 hover:underline"
+              className="text-sm text-red-600 dark:text-red-400 hover:underline"
             >
               Delete
             </button>
           )}
         </div>
       </div>
-      <p className="mt-2 text-lg font-semibold text-black">
+      <p className="mt-2 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
         {formatTime(entry.bedtime)} → {formatTime(entry.wakeTime)}
       </p>
-      <div className="mt-2 flex gap-4 text-sm text-gray-600">
+      <div className="mt-2 flex gap-4 text-sm text-zinc-600 dark:text-zinc-400">
         <span>Quality: {entry.quality}/10</span>
         {entry.notes && <span>· {entry.notes}</span>}
       </div>
