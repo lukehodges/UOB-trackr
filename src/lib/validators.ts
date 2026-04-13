@@ -30,14 +30,14 @@ export const sleepEntryUpdateSchema = sleepEntrySchema.partial().extend({
   id: z.string().uuid(),
 });
 
-export const goalCardSchema = z.object({
+export const goalSchema = z.object({
   goalDesc: z.string(),
   points: z.number().int().min(0),
   startDate: z.string().date().optional(),
   endDate: z.string().date().optional(),
 })
 
-export const goalCardUpdateSchema = goalCardSchema.partial().extend({
+export const goalUpdateSchema = goalSchema.partial().extend({
   id: z.string().uuid(),
 })
 
@@ -92,7 +92,7 @@ export type LoginInput = z.infer<typeof loginSchema>
 export type SleepCycle = z.infer<typeof sleepCycleSchema>
 export type SleepEntry = z.infer<typeof sleepEntrySchema>
 export type SleepEntryUpdate = z.infer<typeof sleepEntryUpdateSchema>
-export type GoalCard = z.infer<typeof goalCardSchema>
-export type GoalCardUpdate = z.infer<typeof goalCardUpdateSchema>
+export type GoalCard = z.infer<typeof goalSchema>
+export type GoalCardUpdate = z.infer<typeof goalUpdateSchema>
 export type StressEntryUpdate = z.infer<typeof stressEntryUpdateSchema>
 export type ScreentimeEntryUpdate = z.infer<typeof screentimeEntryUpdateSchema>

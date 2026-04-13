@@ -52,7 +52,7 @@ export const authRouter = router({
     if (!user) {
       throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
     }
-    // TODO: password is not encrypted!?!?!?!? WHAT HASHING DO WE USE
+    // TODO: password is not encrypted!?!?!?!? WHAT HASHING DO WE USE3
     // TODO: this means someone can reverse engineer password from JWT package
     const valid = await compare(input.password, user.password);
 

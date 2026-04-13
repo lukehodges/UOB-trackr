@@ -17,6 +17,15 @@ export const users = pgTable("users", {
   createdAt: timestamp().defaultNow().notNull(),
 });
 
+export const goalEntries = pgTable("goal_entries", {
+  id: uuid().defaultRandom().primaryKey(),
+  userId: uuid()
+    .notNull()
+    .references(() => users.id),
+  goalDesc: text(),
+  points: integer()
+})
+
 export const sleepEntries = pgTable("sleep_entries", {
   id: uuid().defaultRandom().primaryKey(),
   userId: uuid()
