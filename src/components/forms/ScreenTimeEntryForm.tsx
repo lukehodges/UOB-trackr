@@ -166,6 +166,6 @@ export default function ScreenTimeEntryForm({ initialData, onSubmit }: ScreenTim
       >
         Submit
       </button>
-    </form>
+      </form>
   );
 }
