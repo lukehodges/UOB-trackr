@@ -1,13 +1,22 @@
 'use client';
-import { SleepEntry } from '@/lib/validators';
 import './Graphs.css';
 import React, { useState } from 'react';
 import { AreaChart, Area, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { multipleOf } from 'zod';
+import { da } from 'zod/locales';
 
+interface SleepData {
+    id: string;
+    date: string | Date; 
+    bedtime: string | Date;
+    wakeTime: string | Date;
+    quality: number;
+    notes: string | null;
+    userId: string;
+    cycles?: any;
+}
 
-
-interface FormattedSleepEntry {
+interface FormattedSleepData {
     date: string;
     totalMins: number;
     light: number;
@@ -17,7 +26,7 @@ interface FormattedSleepEntry {
 }
 
 type SleepGraphProps = {
-    rawData?: SleepEntry[];
+    rawData?: SleepData[];
 };
 
 const SleepGraph = ({ rawData }: SleepGraphProps) => {
@@ -44,45 +53,48 @@ const SleepGraph = ({ rawData }: SleepGraphProps) => {
     }
   };
 
-    const addTime = (data: SleepEntry[], total: FormattedSleepEntry[], dataLength: number) => {
+    const addTime = (data: SleepData[], total: FormattedSleepData[], dataLength: number) => {
         for (let i = 0; i < dataLength; i++) {
-            const bedDate = new Date(data[i].bedtime)
-            const wakeDate = new Date(data[i].wakeTime)
-            let totalMins = (wakeDate.getTime()-bedDate.getTime() )/60000;;
-        
-            const date = data[i].date;
-            const month = parseInt(date.split('-')[1]);
+            const bedTime = new Date(data[i].bedtime);
+            const wakeTime = new Date(data[i].wakeTime)
+            const bedDate = new Date(data[i].bedtime).toISOString().split("T")[0];
+            const wakeDate = new Date(data[i].wakeTime).toISOString().split("T")[0];
+            const date = new Date(data[i].date).toISOString().split("T")[0];
 
-            if ((parseInt([0]) * 60 + parseInt(wakeTime[1])) - (parseInt(bedTime[0]) * 60 + parseInt(bedTime[1])) < 0) {
-                let nightMins = 24 * 60 - (parseInt(bedTime[0]) * 60 + parseInt(bedTime[1]));
-                let morningMins = parseInt(wakeTime[0]) * 60 + parseInt(wakeTime[1]);
-                totalMins += nightMins;
-                totalMins += morningMins;
-                //I need to replace this with a means to add morning mins to the next day
+            const month = parseInt(date.split('-')[1]);
+            const day = parseInt(date.split('-')[2]);
+
+            let totalMins = (wakeTime.getTime() - bedTime.getTime()) / 60000;
+
+            if (totalMins < 0){
+                totalMins = totalMins * -1;
+            }
+
+            if (bedDate === wakeDate) {
+                if (selectedDate.length === 4) {
+                    total[month - 1].totalMins += totalMins;
+                }
+                else{
+                    total[day - 1].totalMins += totalMins;
+                }
             }
 
             else{
-                totalMins = (parseInt(wakeTime[0]) * 60 + parseInt(wakeTime[1])) - (parseInt(bedTime[0]) * 60 + parseInt(bedTime[1]));
+                if (selectedDate.length === 4) {
+                    total[month - 1].totalMins += totalMins;
+                }
+                else{
+                    total[day - 1].totalMins += totalMins;
+
+                }
             }
 
-            total[month - 1].totalMins += totalMins;
-
-            if (data[i].cycles === "light") {
-                total[month - 1].light += totalMins;
             }
-            else if (data[i].cycles === "deep") {
-                total[month - 1].deep += totalMins;
-            }
-            else if (data[i].cycles === "rem") {
-                total[month - 1].rem += totalMins;
-            }
-        }
 
         return total;
+    };
 
-    }
-
-    const formatData = (newData: SleepEntry[]) => {
+    const formatData = (newData: SleepData[]) => {
         const dataLength = data.length;
 
         if (selectedDate.length === 4) {
@@ -119,22 +131,32 @@ const SleepGraph = ({ rawData }: SleepGraphProps) => {
 
     const finalData = formatData(data);
 
-    const [hideLight, setHideLight] = useState(false);
-    const [hideDeep, setHideDeep] = useState(false);
-    const [hideRem, setHideRem] = useState(false); 
+    let total = 0;
+    let numDays = 0;
+    let avg = 0;
+    let SleepAdvice = "none";
 
-    const hideCategories = 
-    <div className="flex items-center justify-start mb-4">
-        <form>
-            <label htmlFor = "hideLight"> Hide light sleep: </label>
-            <input type = "checkbox" id = "hideLight" name="hideLight" onChange={(e) => setHideLight(e.target.checked)}/>
-            <label htmlFor = "hideDeep"> Hide deep sleep: </label>
-            <input type = "checkbox" id = "hideDeep" name="hideDeep" onChange={(e) => setHideDeep(e.target.checked)}/>
-            <label htmlFor = "hideRem"> Hide rem sleep: </label>
-            <input type = "checkbox" id = "hideRem" name="hideRem" onChange={(e) => setHideRem(e.target.checked)}/>
-        </form>
+    for (let i = 0; i < finalData.length; i++) {
+        if (finalData[i].totalMins > 0){
+        total += finalData[i].totalMins;
+        numDays += 1;
+        }
+    }
 
-    </div>
+    if (numDays > 0) {
+        avg = total / numDays;
+        if (avg > 10*60){
+            SleepAdvice = "10";
+        }
+        else if (avg >7*60){
+            SleepAdvice = "6";
+        }
+        else{
+            SleepAdvice = "4";
+        }
+    }
+
+
 
     const toggleMonthYear = 
         <div className="w-full h-96"> 
@@ -153,21 +175,17 @@ const SleepGraph = ({ rawData }: SleepGraphProps) => {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="date" tickFormatter={formatXAxis} minTickGap={10} domain = {["auto", "auto"]}/>
             <YAxis dataKey = "totalMins"/>
-            <Area type="monotone" dataKey="light" stroke="#da69de" fill="#da69de" stackId="1" hide = {hideLight}/>
-            <Area type="monotone" dataKey="deep" stroke="#82ca9d" fill="#82ca9d" stackId="1" hide = {hideDeep}/>
-            <Area type="monotone" dataKey="rem" stroke="#ffc658" fill="#ffc658" stackId="1" hide = {hideRem}/>            
+            <Area type="monotone" dataKey="totalMins" stroke="#2764aa" fill="#2764aa" stackId="1"/>           
             <Legend />
             <Tooltip />
        </AreaChart>
     </ResponsiveContainer>
-    //do seperate view for quality
 
   if (toggled) {
     return ( 
     
     <div className="w-full h-96">
       <div className="flex items-center justify-between mb-4">
-        {hideCategories}
         {toggleMonthYear}
         <form>
             <label htmlFor = "selectYear"> Select year: </label>
@@ -179,11 +197,10 @@ const SleepGraph = ({ rawData }: SleepGraphProps) => {
     )
   }
 
-  else {
+  else if (SleepAdvice === "10"){
     return (
     <div className="w-full h-96">
       <div className="flex items-center justify-between mb-4">
-        {hideCategories}
         {toggleMonthYear}
         <form>
             <label htmlFor = "selectMonth"> Select month: </label>
@@ -191,6 +208,45 @@ const SleepGraph = ({ rawData }: SleepGraphProps) => {
         </form>
       </div>
         {MultiSleepGraph}
+        <div>
+            <p>You must be very well rested!</p>
+        </div>
+    </div>
+    )
+    }
+
+    else if (SleepAdvice === "6"){
+    return (
+    <div className="w-full h-96">
+      <div className="flex items-center justify-between mb-4">
+        {toggleMonthYear}
+        <form>
+            <label htmlFor = "selectMonth"> Select month: </label>
+            <input type = "month" id = "selectMonth" name="selectMonth" value = {selectedDate} onChange={(e) => setSelectedDate(e.target.value)}/>
+        </form>
+      </div>
+        {MultiSleepGraph}
+        <div>
+            <p>You have a healthy sleep schedule</p>
+        </div>
+    </div>
+    )
+    }
+
+    else{
+    return (
+    <div className="w-full h-96">
+      <div className="flex items-center justify-between mb-4">
+        {toggleMonthYear}
+        <form>
+            <label htmlFor = "selectMonth"> Select month: </label>
+            <input type = "month" id = "selectMonth" name="selectMonth" value = {selectedDate} onChange={(e) => setSelectedDate(e.target.value)}/>
+        </form>
+      </div>
+        {MultiSleepGraph}
+        <div>
+            <p>You should get more sleep</p>
+        </div>
     </div>
     )
     }
