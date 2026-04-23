@@ -1,25 +1,28 @@
 'use client';
+import { text } from 'drizzle-orm/sqlite-core/columns/text';
 import './Graphs.css';
 import React, { useState}from "react";
 import { AreaChart, Area, ResponsiveContainer, XAxis, YAxis , CartesianGrid, Legend, Tooltip} from "recharts";
 
 interface ScreenTimeEntry {
-    id?: number;
-    userId?: number;
+    id: string;
+    userId: string;
     date: string;
     totalMins: number;
     category: string;
-    appName?: string;
-    notes?: string;
+    appName: string | null;
+    notes: string | null;
 }
 
 type ScreenTimeGraphProps = {
     rawData?: ScreenTimeEntry[];
 };
 
-const ScreenTimeGraphMonth = ({ rawData }: ScreenTimeGraphProps) => {
+const ScreenTimeGraph = ({ rawData }: ScreenTimeGraphProps) => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0].slice(0, 7));
   const [toggled, setToggled] = useState(false);
+
+  let ScreenTimeAdvice = false;
 
   let data = rawData?.filter((entry) => entry.date.startsWith(selectedDate)) || [];
   
@@ -41,6 +44,9 @@ const ScreenTimeGraphMonth = ({ rawData }: ScreenTimeGraphProps) => {
 
   const formatData = (newData: ScreenTimeEntry[]) => {
     const newDataLength = data.length;
+    const day = parseInt(selectedDate.split('-')[2]);
+    const month = parseInt(selectedDate.split('-')[1]);
+    const year = parseInt(selectedDate.split('-')[0]);
     if (selectedDate.length === 4) {
     let total = [{date: `${selectedDate}-01-01`,totalMins: 0,social: 0, entertainment: 0, productivity: 0, education: 0, other: 0}, {date: `${selectedDate}-02-01`, totalMins: 0,social: 0, entertainment: 0, productivity: 0, education: 0, other: 0}, {date: `${selectedDate}-03-01`, totalMins: 0,social: 0, entertainment: 0, productivity: 0, education: 0, other: 0}, {date: `${selectedDate}-04-01`, totalMins: 0,social: 0, entertainment: 0, productivity: 0, education: 0, other: 0}, {date: `${selectedDate}-05-01`, totalMins: 0,social: 0, entertainment: 0, productivity: 0, education: 0, other: 0}, {date: `${selectedDate}-06-01`, totalMins: 0,social: 0, entertainment: 0, productivity: 0, education: 0, other: 0},{date: `${selectedDate}-07-01`, totalMins: 0,social: 0, entertainment: 0, productivity: 0, education: 0, other: 0},{date: `${selectedDate}-08-01`, totalMins: 0,social: 0, entertainment: 0, productivity: 0, education: 0, other: 0},{date: `${selectedDate}-09-01`, totalMins: 0,social: 0, entertainment: 0, productivity: 0, education: 0, other: 0},{date: `${selectedDate}-10-01`, totalMins: 0,social: 0, entertainment: 0, productivity: 0, education: 0, other: 0}, {date: `${selectedDate}-11-01`, totalMins: 0,social: 0, entertainment: 0, productivity: 0, education: 0, other: 0}, {date: `${selectedDate}-12-01`, totalMins: 0,social: 0, entertainment: 0, productivity: 0, education: 0, other: 0}];
     for (let i = 0; i < newDataLength; i++) {
@@ -163,35 +169,34 @@ const ScreenTimeGraphMonth = ({ rawData }: ScreenTimeGraphProps) => {
         }
 
     }
+
+    let totalMins = 0;
+    let numDays = 0;
+    let avg = 0;
+
+    for (let i = 0; i < total.length; i++){
+        totalMins += total[i].totalMins;
+        numDays++;
+    }
+
+    if (numDays === 0){
+    }
+    else{
+        avg = totalMins / numDays;
+        if (avg > 60*4){
+            ScreenTimeAdvice = true;
+        }
+        else{
+        }
+    }
+
+
     return total;
   }
 
   };
 
     const finalData = formatData(data);
-
-    const [hideSocial, setHideSocial] = useState(false);
-    const [hideEntertainment, setHideEntertainment] = useState(false);
-    const [hideProductivity, setHideProductivity] = useState(false);
-    const [hideEducation, setHideEducation] = useState(false);
-    const [hideOther, setHideOther] = useState(false);
-
-    const hideCategories = 
-    <div className="flex items-center justify-start mb-4">
-        <form>
-            <label htmlFor = "hideSocial"> Hide social category: </label>
-            <input type = "checkbox" id = "hideSocial" name="hideSocial" onChange={(e) => setHideSocial(e.target.checked)}/>
-            <label htmlFor = "hideEntertainment"> Hide entertainment category: </label>
-            <input type = "checkbox" id = "hideEntertainment" name="hideEntertainment" onChange={(e) => setHideEntertainment(e.target.checked)}/>
-            <label htmlFor = "hideProductivity"> Hide productivity category: </label>
-            <input type = "checkbox" id = "hideProductivity" name="hideProductivity" onChange={(e) => setHideProductivity(e.target.checked)}/>
-            <label htmlFor = "hideEducation"> Hide education category: </label>
-            <input type = "checkbox" id = "hideEducation" name="hideEducation" onChange={(e) => setHideEducation(e.target.checked)}/>
-            <label htmlFor = "hideOther"> Hide other category: </label>
-            <input type = "checkbox" id = "hideOther" name="hideOther" onChange={(e) => setHideOther(e.target.checked)}/>
-        </form>
-
-    </div>
 
     const toggleMonthYear = 
         <div className="w-full h-96"> 
@@ -207,15 +212,12 @@ const ScreenTimeGraphMonth = ({ rawData }: ScreenTimeGraphProps) => {
     const graph = 
     <main className = "mx-auto w-full h-96">
         <ResponsiveContainer minWidth={0} minHeight={0} width={800} height={300}>
+            
             <AreaChart width={800} height={300} data={finalData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" tickFormatter={formatXAxis}/>
                 <YAxis dataKey = "totalMins"/>
-                <Area type="monotone" dataKey="social" stroke="#da69de" fill="#da69de" stackId="1" hide = {hideSocial}/>
-                <Area type="monotone" dataKey="entertainment" stroke="#82ca9d" fill="#82ca9d" stackId="1" hide = {hideEntertainment}/>
-                <Area type="monotone" dataKey="productivity" stroke="#ffc658" fill="#ffc658" stackId="1" hide = {hideProductivity}/>
-                <Area type="monotone" dataKey="education" stroke="#da5959" fill="#da5959" stackId="1" hide = {hideEducation}/>
-                <Area type="monotone" dataKey="other" stroke="#717bc8" fill="#717bc8" stackId="1" hide = {hideOther}/> 
+                <Area type="monotone" dataKey="totalMins" stroke="#da5959" fill="#da5959" stackId="1"/>
                 <Legend />
                 <Tooltip />
            </AreaChart>
@@ -229,33 +231,56 @@ const ScreenTimeGraphMonth = ({ rawData }: ScreenTimeGraphProps) => {
     
     <div className="w-full h-96">
       <div className="flex items-center justify-between mb-4">
-        {hideCategories}
         {toggleMonthYear}
         <form>
             <label htmlFor = "selectYear"> Select year: </label>
             <input type = "number" id = "selectYear" name="selectYear" value = {selectedDate} min = "2000" max = "2027" onChange={(e) => setSelectedDate(e.target.value)}/>
         </form>
       </div>
-    {graph}
+        {graph}
     </div>
     )
   }
 
-  else {
+  else if (ScreenTimeAdvice){
     return (
     <div className="w-full h-96">
       <div className="flex items-center justify-between mb-4">
-        {hideCategories}
         {toggleMonthYear}
         <form>
             <label htmlFor = "selectMonth"> Select month: </label>
             <input type = "month" id = "selectMonth" name="selectMonth" value = {selectedDate} onChange={(e) => setSelectedDate(e.target.value)}/>
         </form>
       </div>
-        {graph}
+      {graph}
+            <div className="w-full h-96">
+                <p>You have been on your phone for more then 4 hours per day, you should take a break</p>
+            </div>
+        
+        
+    </div>
+    )
+  }
+  else{
+    return(
+    <div className="w-full h-96">
+      <div className="flex items-center justify-between mb-4">
+        {toggleMonthYear}
+        <form>
+            <label htmlFor = "selectMonth"> Select month: </label>
+            <input type = "month" id = "selectMonth" name="selectMonth" value = {selectedDate} onChange={(e) => setSelectedDate(e.target.value)}/>
+        </form>
+      </div>
+      {graph}
+            <div >
+                <p>You have been on your phone for less then 4 hours per day, keep up the good work!</p>
+            </div>
+        
+        
     </div>
     )
   }
 };
 
-export default ScreenTimeGraphMonth;
+export default ScreenTimeGraph;
+
