@@ -46,3 +46,5 @@ next-env.d.ts
 docs/superpowers
 *storybook.log
 storybook-static
+pnpm-lock.yaml
+next.config.ts
