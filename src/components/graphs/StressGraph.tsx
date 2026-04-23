@@ -2,14 +2,15 @@
 import './Graphs.css';
 import React, { useState } from 'react';
 import { AreaChart, Area, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-
+ 
 interface StressData {
-    id?: number;
-    userId?: number;
+    id: string;
+    userId: string;
     date: string;
     level: number;
-    source?: string;
-    notes?: string;
+    source: string | null;
+    notes: string | null;
+
 }
 
 type StressGraphProps = {
@@ -43,9 +44,17 @@ const StressGraph = ({rawData}: StressGraphProps) => {
       const date = data[i].date;
       const level = data[i].level;
         for (let j = 0; j < total.length; j++) {
-            if (total[j].date === date) {
-                total[j].level += level;
-                total[j].count += 1;
+            if (selectedDate.length === 4) {
+                if (total[j].date.split('-')[1] === date.split('-')[1]) {
+                    total[j].level += level;
+                    total[j].count += 1;
+                }
+            }
+                else{
+                    if (total[j].date === date){
+                        total[j].level += level;
+                        total[j].count += 1;
+                    }
             }
         }
     }
@@ -95,6 +104,30 @@ const StressGraph = ({rawData}: StressGraphProps) => {
 
     const finalData = formatData(data);
 
+    let totalStress = 0;
+    let numDays = 0;
+    let avg = 0;
+    let ScreenTimeAdvice = "none";
+    for (let i = 0; i < data.length; i++) {
+        totalStress += data[i].level;
+        numDays += 1;
+    }
+
+    if (numDays > 0) {
+        avg = totalStress / numDays;
+        if (avg > 8){
+            ScreenTimeAdvice = "max";
+        }
+        else if (avg > 5){
+            ScreenTimeAdvice = "medium";
+        }
+        else{
+            ScreenTimeAdvice = "min";
+        }
+    }
+
+
+
     const toggleMonthYear = 
         <div className="w-full h-96"> 
             <div className="flex items-center justify-between mb-4">
@@ -134,7 +167,7 @@ const StressGraph = ({rawData}: StressGraphProps) => {
     )
   }
 
-  else {
+  else if (ScreenTimeAdvice === "max"){
     return (
     <div className="w-full h-96">
       <div className="flex items-center justify-between mb-4">
@@ -145,6 +178,44 @@ const StressGraph = ({rawData}: StressGraphProps) => {
         </form>
       </div>
         {MultiSleepGraph}
+        <div>
+            <p>You are extremely stressed, you need to take a break</p>
+        </div>
+    </div>
+    )
+    }
+    else if (ScreenTimeAdvice === "medium"){
+    return (
+    <div className="w-full h-96">
+      <div className="flex items-center justify-between mb-4">
+        {toggleMonthYear}
+        <form>
+            <label htmlFor = "selectMonth"> Select month: </label>
+            <input type = "month" id = "selectMonth" name="selectMonth" value = {selectedDate} onChange={(e) => setSelectedDate(e.target.value)}/>
+        </form>
+      </div>
+        {MultiSleepGraph}
+        <div>
+            <p>You are moderately stressed, you should consider taking a break</p>
+        </div>
+    </div>
+    )
+
+    }
+    else {
+    return (
+    <div className="w-full h-96">
+      <div className="flex items-center justify-between mb-4">
+        {toggleMonthYear}
+        <form>
+            <label htmlFor = "selectMonth"> Select month: </label>
+            <input type = "month" id = "selectMonth" name="selectMonth" value = {selectedDate} onChange={(e) => setSelectedDate(e.target.value)}/>
+        </form>
+      </div>
+        {MultiSleepGraph}
+        <div className="w-full h-96">
+            <p>You seem to be doing well, keep it up!</p>
+        </div>
     </div>
     )
     }
