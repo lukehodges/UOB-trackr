@@ -3,7 +3,6 @@ import React from "react";
 export default function GoalEntryForm() {
 
     async function addGoal(formData: FormData) {
-        "use server"
         const desc = formData.get("DescriptionInput")
         const points = formData.get("PointsInput")
         // await (updateDatabase())

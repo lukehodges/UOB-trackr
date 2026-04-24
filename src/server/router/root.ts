@@ -3,12 +3,14 @@ import { authRouter } from "@/server/router/auth";
 import { sleepRouter } from "@/server/router/sleep";
 import { stressRouter } from "@/server/router/stress";
 import { screentimeRouter } from "@/server/router/screentime";
+import { goalsRouter } from "./goals";
 
 export const appRouter = router({
   auth: authRouter,
   sleep: sleepRouter,
   stress: stressRouter,
   screentime: screentimeRouter,
+  goals: goalsRouter,
 });
 
 export type AppRouter = typeof appRouter;
